@@ -8,21 +8,21 @@ Usage
 
 Basic UserAPI usage::
 
-    import fblib
-    api = fblib.core.UserAPI(<user_access_token>)
+    from fblib.core import UserAPI
+    api = UserAPI(<user_access_token>)
     api_user = api.get_objects('me')
 
 Basic AppAPI usage::
 
-    import fblib
+    from fblib.core import AppAPI
     api = fblib.core.AppAPI(app_id=<application_id>, app_secret=<application_key>)
     app_token = app_api.get_app_access_token()
 
 Proper usage::
 
-    import fblib
+    from fblib.core import UserAPI
     access_token = <user_access_token>
-    api = fblib.core.UserAPI(access_token)
+    api = UserAPI(access_token)
     try:
         api_user = api.get_objects('me')
     except fblib.core.FacebookError:

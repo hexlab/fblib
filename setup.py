@@ -13,7 +13,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-requirements = []
+requirements = ['requests==0.14.1']
 
 setup(name='fblib',
       version=".".join(map(str, __version__)),
@@ -22,7 +22,7 @@ setup(name='fblib',
       author='Kirill Karmadonov',
       author_email='kirill@live.com',
       url='https://github.com/0xKirill/fblib',
-      install_requires=requirements,
+      install_requires=['requests==0.14.1'],
       packages=find_packages(exclude=['tests']),
       package_dir={'fblib': 'fblib'},
       include_package_data=True,
