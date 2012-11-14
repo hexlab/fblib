@@ -1,41 +1,43 @@
 #!/usr/bin/env python
 import os
 import sys
+from setuptools import setup, find_packages
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from fblib import __version__
 
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
+requirements = []
+
 setup(name='fblib',
-    version='0.9',
-    description='Alternative version of Facebook Python SDK',
-    long_description=open('README.rst').read(),
-    author='Kirill Karmadonov',
-    author_email='kirill@live.com',
-    url='https://github.com/0xKirill/fblib',
-    install_requires=['requests==0.14.1'],
-    packages=['fblib'],
-    package_dir={'fblib': 'fblib'},
-    include_package_data=True,
-    license=open('LICENSE').read(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: ISC License (ISCL)',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.0',
-        'Programming Language :: Python :: 3.1',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-    ])
+      version=".".join(map(str, __version__)),
+      description='Alternative version of Facebook Python SDK',
+      long_description=read('README.rst'),
+      author='Kirill Karmadonov',
+      author_email='kirill@live.com',
+      url='https://github.com/0xKirill/fblib',
+      install_requires=requirements,
+      packages=find_packages(exclude=['tests']),
+      package_dir={'fblib': 'fblib'},
+      include_package_data=True,
+      license=open('LICENSE').read(),
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: Web Environment',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: ISC License (ISCL)',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.0',
+          'Programming Language :: Python :: 3.1',
+          'Programming Language :: Python :: 3.2',
+          'Programming Language :: Python :: 3.3'])

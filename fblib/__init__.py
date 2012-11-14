@@ -28,11 +28,11 @@ Running tests:
 :license: ISC, see LICENSE for more details.
 """
 
-import core
+from fblib import core
+
 
 __title__ = 'fblib'
-__version__ = '0.9'
-__build__ = 0x009
+__version__ = (0, 9, 4)
 __author__ = 'Kirill Karmadonov'
 __license__ = 'ISC'
 __copyright__ = 'Copyright 2012 Kirill Karmadonov'

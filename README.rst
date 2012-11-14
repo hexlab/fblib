@@ -18,7 +18,7 @@ Basic AppAPI usage::
     api = fblib.core.AppAPI(app_id=<application_id>, app_secret=<application_key>)
     app_token = app_api.get_app_access_token()
 
-Proper use::
+Proper usage::
 
     import fblib
     access_token = <user_access_token>
