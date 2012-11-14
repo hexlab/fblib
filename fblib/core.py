@@ -212,7 +212,7 @@ class UserAPI:
             return res.text
         return res.url
 
-    def search(self, query, object_id, **kwargs):
+    def search(self, query, **kwargs):
         """ Search over all public objects in the social graph
             Required parameters:
                 query -- search query
@@ -221,7 +221,7 @@ class UserAPI:
             Optional parameters:
                 kwargs -- dictionary with additional parameters for the request
         """
-        api_method = 'search?q={}&type={}'.format(query, object_id)
+        api_method = 'search?q={}'.format(query)
         res = self._call_api('GET', api_method, **kwargs)
         return res.json
 

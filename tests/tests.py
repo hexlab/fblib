@@ -118,15 +118,15 @@ class TestUserAPI(unittest.TestCase):
         res = self.api.get_pictures('0xKirill', content_type='image')
 
         # Search for all public posts with 'watermelon'
-        res = self.api.search('watermelon', 'post')
+        res = self.api.search('watermelon', type='post')
         self.assertIn('data', res)
 
         # Searching for all Kirills
-        res = self.api.search('Kirill', 'user')
+        res = self.api.search('Kirill', type='user')
         self.assertIn('data', res)
 
         # Searching for all platform pages
-        res = self.api.search('Platform', 'page')
+        res = self.api.search('Platform', type='page')
         self.assertIn('data', res)
 
         # Publish post
