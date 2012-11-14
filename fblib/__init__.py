@@ -28,6 +28,8 @@ Running tests:
 :license: ISC, see LICENSE for more details.
 """
 
+import core
+
 __title__ = 'fblib'
 __version__ = '0.9'
 __build__ = 0x009
