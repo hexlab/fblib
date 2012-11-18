@@ -221,7 +221,9 @@ class UserAPI:
             Optional parameters:
                 kwargs -- dictionary with additional parameters for the request
         """
-        api_method = 'search?q={}'.format(query)
+        api_method = 'search'
+        if query:
+            kwargs['q'] = query
         res = self._call_api('GET', api_method, **kwargs)
         return res.json
 
