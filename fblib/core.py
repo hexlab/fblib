@@ -48,7 +48,7 @@ class AppAPI:
         self.access_token = res.text.split('=', 1)[1]
         return self.access_token
 
-    def _call_api(self, http_method, api_method, **kwargs):
+    def _call_api(self, http_method, api_method, files=None, **kwargs):
         """ Basic method for calling Facebook Graph Api
             Required parameters:
                 http_method -- HTTP request methods, e.g. 'POST', 'GET', etc.
@@ -62,7 +62,7 @@ class AppAPI:
         url = '/'.join((self.api_url, self.app_id, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params)
+        res = requests.request(http_method, url, params=params, files=None)
         if hasattr(res.json, '__contains__') and 'error' in res.json:
             raise FacebookError(res.json)
         return res
@@ -136,7 +136,7 @@ class UserAPI:
         """
         self.access_token = access_token
 
-    def _call_api(self, http_method, api_method, **kwargs):
+    def _call_api(self, http_method, api_method, files=None, **kwargs):
         """ Basic method for calling Facebook Graph Api
             Required parameters:
                 http_method -- HTTP request methods, e.g. 'POST', 'GET', etc.
@@ -148,7 +148,7 @@ class UserAPI:
         url = '/'.join((self.api_url, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params)
+        res = requests.request(http_method, url, params=params, files=files)
         if hasattr(res.json, '__contains__') and 'error' in res.json:
             raise FacebookError(res.json)
         return res
