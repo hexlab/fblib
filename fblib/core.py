@@ -62,7 +62,7 @@ class AppAPI:
         url = '/'.join((self.api_url, self.app_id, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params, files=None)
+        res = requests.request(http_method, url, params=params, files=files)
         if hasattr(res.json, '__contains__') and 'error' in res.json:
             raise FacebookError(res.json)
         return res
