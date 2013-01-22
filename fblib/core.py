@@ -132,9 +132,29 @@ class UserAPI:
     api_url = 'https://graph.facebook.com'
 
     def __init__(self, access_token):
-        """
-        """
+        self.app_id = None
+        self.app_secret = None
         self.access_token = access_token
+        self.access_token_expiry = 0
+
+    def extend_access_token(self):
+        """ Extends the current user access token being used by the SDK
+        """
+        url = '/'.join((self.api_url, "oauth/access_token"))
+        params = dict(client_id=self.app_id,
+                      client_secret=self.app_secret,
+                      grant_type='fb_exchange_token',
+                      fb_exchange_token=self.access_token)
+        res = requests.get(url, params=params)
+        if hasattr(res.json, '__contains__') and 'error' in res.json:
+            raise FacebookError(res.json)
+        result = res.text.split("&", 1)
+        for p in result:
+            (k,v) = p.split("=")
+            params[k] = v
+        self.access_token = params['access_token']
+        self.access_token_expiry = params['expires']
+        return self.access_token
 
     def _call_api(self, http_method, api_method, files=None, **kwargs):
         """ Basic method for calling Facebook Graph Api
