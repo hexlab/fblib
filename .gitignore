@@ -31,4 +31,4 @@ nosetests.xml
 
 # PyCharm
 .idea
-
+.venv
