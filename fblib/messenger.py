@@ -3,6 +3,17 @@ import requests
 from fblib.core import FacebookError
 
 
+def url_button():
+    return {
+        'type':"web_url",
+        'url":"<URL_TO_OPEN>",
+        'title":"<BUTTON_TEXT>",
+        'webview_height_ratio": "<compact|tall|full>",
+        'messenger_extensions": "<true|false>",  
+        'fallback_url": "<URL_TO_FALLBACK_TO>"
+    }
+
+
 class BotAPI:
     api_url = 'https://graph.facebook.com'
     api_version = 'v2.6'
