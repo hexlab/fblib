@@ -5,7 +5,6 @@ from fblib.messenger.common import (
     Button,
     Template,
     RequestConstructor,
-    Recipient,
 )
 
 
@@ -94,8 +93,6 @@ class GenericTemplate(Template):
         will be opened in the Messenger webview when the template is tapped.
 
         Args:
-            recipient:
-                Description of the message recipient.
             elements:
                 The generic template supports a maximum
                 of 10 elements per message.
@@ -109,14 +106,12 @@ class GenericTemplate(Template):
     template_type = 'generic'
 
     def __init__(self,
-                 recipient: Recipient,
                  elements: Union[List[GenericElement],
                                  List['GenericTemplate']]):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'elements': elements
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class ListTemplate(Template):
@@ -124,8 +119,6 @@ class ListTemplate(Template):
         with a set of items rendered vertically.
 
         Args:
-            recipient:
-                Description of the message recipient.
             elements:
                 The generic template supports a maximum
                 of 10 elements per message.
@@ -151,18 +144,16 @@ class ListTemplate(Template):
     template_type = 'list'
 
     def __init__(self,
-                 recipient: Recipient,
                  elements: List[GenericElement],
                  top_element_style: Optional[str]=None,
                  buttons: Optional[List[Button]]=None
                  ):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'top_element_style': top_element_style,
             'buttons': buttons,
             'elements': elements
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class ButtonTemplate(Template):
@@ -170,8 +161,6 @@ class ButtonTemplate(Template):
         that includes text and buttons.
 
         Args:
-            recipient:
-                Description of the message recipient.
             text:
                 UTF-8-encoded text of up to 640 characters.
                 Text will appear above the buttons.
@@ -187,16 +176,14 @@ class ButtonTemplate(Template):
     template_type = 'button'
 
     def __init__(self,
-                 recipient: Recipient,
                  text: str,
                  buttons: Optional[List[Button]] = None
                  ):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'text': text,
             'buttons': buttons
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class OpenGraphTemplate(Template):
@@ -211,8 +198,6 @@ class OpenGraphTemplate(Template):
         and verify the `sharing_open_graph` feature is available.
 
         Args:
-            recipient:
-                Description of the message recipient.
             url:
                 String to display as the title of the list item.
                 80 character limit.
@@ -233,16 +218,13 @@ class OpenGraphTemplate(Template):
     template_type = 'open_graph'
 
     def __init__(self,
-                 recipient: Recipient,
                  url: str,
-                 buttons: List[Button] = None
-                 ):
-        self.payload = {
+                 buttons: List[Button] = None):
+        self.syntax = {
             'template_type': self.template_type,
             'url': url,
             'buttons': buttons
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class ReceiptElements(RequestConstructor):
@@ -365,8 +347,6 @@ class ReceiptTemplate(Template):
         as a structured message.
 
         Args:
-            recipient:
-                Description of the message recipient.
             sharable:
                 Set to true to enable the native share button in Messenger
                 for the template message. Defaults to false.
@@ -386,7 +366,8 @@ class ReceiptTemplate(Template):
             timestamp:
                 Timestamp of the order in seconds.
             elements:
-                Array of a maximum of 100 element objects that describe items in the order. Sort order of the elements is not guaranteed.
+                Array of a maximum of 100 element objects that describe items
+                in the order. Sort order of the elements is not guaranteed.
             address:
                 The shipping address of the order.
             summary:
@@ -404,7 +385,6 @@ class ReceiptTemplate(Template):
     template_type = 'receipt'
 
     def __init__(self,
-                 recipient: Recipient,
                  recipient_name: str,
                  order_number: str,
                  currency: str,
@@ -416,7 +396,7 @@ class ReceiptTemplate(Template):
                  elements: Optional[ReceiptElements]=None,
                  address: Optional[Address]=None,
                  adjustments: Optional[List[Adjustment]]=None):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'sharable': sharable,
             'recipient_name': recipient_name,
@@ -430,7 +410,6 @@ class ReceiptTemplate(Template):
             'summary': summary,
             'adjustments': adjustments
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class AuxiliaryField(RequestConstructor):
@@ -617,10 +596,8 @@ class AirlineBoardingPassTemplate(Template):
         for one or more passengers.
 
         Args:
-            recipient:
-                Description of the message recipient.
             intro_message:
-                Introduction message
+                Introduction message.
             locale:
                 Two-letter language region code.
                 Must be a two-letter ISO 639-1 language code and a
@@ -642,20 +619,18 @@ class AirlineBoardingPassTemplate(Template):
     template_type = 'airline_boardingpass'
 
     def __init__(self,
-                 recipient: Recipient,
                  intro_message: str,
                  locale: str,
                  boarding_pass: List[BoardingPass],
                  theme_color: Optional[str]=None
                  ):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'intro_message': intro_message,
             'locale': locale,
             'theme_color': theme_color,
             'boarding_pass': boarding_pass,
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class AirlineCheckinReminderTemplate(Template):
@@ -663,10 +638,8 @@ class AirlineCheckinReminderTemplate(Template):
         message that contains a check-in reminder with flight information.
 
         Args:
-            recipient:
-                Description of the message recipient.
             intro_message:
-                Introduction message
+                Introduction message.
             locale:
                 Two-letter language region code.
                 Must be a two-letter ISO 639-1 language code and a
@@ -689,13 +662,12 @@ class AirlineCheckinReminderTemplate(Template):
     template_type = 'airline_checkin'
 
     def __init__(self,
-                 recipient: Recipient,
                  intro_message: str,
                  locale: str,
                  checkin_url: str,
                  flight_info: FlightInfo,
                  pnr_number: Optional[str] = None):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'intro_message': intro_message,
             'locale': locale,
@@ -703,7 +675,6 @@ class AirlineCheckinReminderTemplate(Template):
             'flight_info': flight_info,
             'pnr_number': pnr_number,
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class PassengerInfo(RequestConstructor):
@@ -776,6 +747,7 @@ class PassengerSegmentInfo(RequestConstructor):
             'product_info': product_info,
         }
 
+
 class PriceInfo(RequestConstructor):
     """ Itemization of the total price.
 
@@ -783,7 +755,7 @@ class PriceInfo(RequestConstructor):
             title:
                 Price info title.
             amount:
-                Price amount
+                Price amount.
             currency:
                 Pricing currency.
                 Must be a three digit ISO-4217-3 code.
@@ -805,8 +777,6 @@ class AirlineItineraryUpdateTemplate(Template):
         that contains a check-in reminder with flight information.
 
         Args:
-            recipient:
-                Description of the message recipient.
             intro_message:
                 Introduction message.
             locale:
@@ -847,7 +817,6 @@ class AirlineItineraryUpdateTemplate(Template):
     template_type = 'airline_itinerary'
 
     def __init__(self,
-                 recipient: Recipient,
                  intro_message: str,
                  locale: str,
                  pnr_number: str,
@@ -860,7 +829,7 @@ class AirlineItineraryUpdateTemplate(Template):
                  price_info: Optional[List[PriceInfo]]=None,
                  base_price: Optional[Decimal]=None,
                  tax: Optional[Decimal]=None):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'intro_message': intro_message,
             'locale': locale,
@@ -875,7 +844,6 @@ class AirlineItineraryUpdateTemplate(Template):
             'total_price': total_price,
             'currency': currency,
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class AirlineFlightUpdateTemplate(Template):
@@ -883,8 +851,6 @@ class AirlineFlightUpdateTemplate(Template):
         a structured message that contains a updated flight information.
 
         Args:
-            recipient:
-                Description of the message recipient.
             intro_message:
                 Introduction message
             theme_color:
@@ -913,15 +879,13 @@ class AirlineFlightUpdateTemplate(Template):
     template_type = 'airline_update'
 
     def __init__(self,
-                 recipient: Recipient,
                  intro_message: str,
                  update_type: str,
                  locale: str,
                  update_flight_info: FlightInfo,
                  pnr_number: Optional[str]=None,
-                 theme_color: Optional[str]=None,
-        ):
-        self.payload = {
+                 theme_color: Optional[str]=None):
+        self.syntax = {
             'template_type': self.template_type,
             'intro_message': intro_message,
             'locale': locale,
@@ -930,7 +894,6 @@ class AirlineFlightUpdateTemplate(Template):
             'pnr_number': pnr_number,
             'update_flight_info': update_flight_info
         }
-        super().__init__(recipient=recipient, payload=self.payload)
 
 
 class MediaElements(RequestConstructor):
@@ -967,8 +930,6 @@ class MediaTemplate(Template):
         that includes an image or video, and an optional button.
 
         Args:
-            recipient:
-                Description of the message recipient.
             elements:
                 An array containing 1 element object that describe the media
                 in the message. A maximum of 1 element is supported.
@@ -983,10 +944,8 @@ class MediaTemplate(Template):
     template_type = 'media'
 
     def __init__(self,
-                 recipient: Recipient,
                  elements: List[MediaElements]):
-        self.payload = {
+        self.syntax = {
             'template_type': self.template_type,
             'elements': elements
         }
-        super().__init__(recipient=recipient, payload=self.payload)
