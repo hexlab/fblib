@@ -694,8 +694,7 @@ class AirlineCheckinReminderTemplate(Template):
                  locale: str,
                  checkin_url: str,
                  flight_info: FlightInfo,
-                 pnr_number: Optional[str] = None,
-                 ):
+                 pnr_number: Optional[str] = None):
         self.payload = {
             'template_type': self.template_type,
             'intro_message': intro_message,
@@ -707,6 +706,100 @@ class AirlineCheckinReminderTemplate(Template):
         super().__init__(recipient=recipient, payload=self.payload)
 
 
+class PassengerInfo(RequestConstructor):
+    """ Information about a passenger.
+
+        Args:
+            passenger_id:
+                Passenger ID. Must be unique within the itinerary.
+            ticket_number:
+                Ticket number.
+            name:
+                Full name of passenger, including title
+    """
+    def __init__(self,
+                 passenger_id: str,
+                 name: str,
+                 ticket_number: Optional[str],
+                 ):
+        self.syntax = {
+            'passenger_id': passenger_id,
+            'ticket_number': ticket_number,
+            'name': name
+        }
+
+
+class ProductInfo(RequestConstructor):
+    """ List of products the passenger purchased.
+
+        Args:
+            title:
+                Product title.
+            value:
+                Product description.
+    """
+    def __init__(self, title: str, value: str):
+        self.syntax = {
+            'title': title,
+            'value': value,
+        }
+
+
+class PassengerSegmentInfo(RequestConstructor):
+    """ Information unique to passenger/segment pair.
+
+        Args:
+            segment_id:
+                Used to identify a flight segment.
+                Must be unique within the itinerary.
+            passenger_id:
+                passenger_id of passenger_info object.
+            seat:
+                Seat number for the passenger.
+            seat_type:
+                Seat type for the passenger (e.g. Economy comfort).
+            product_info:
+                List of products the passenger purchased.
+                Maximum of 4 items is supported.
+    """
+    def __init__(self,
+                 segment_id: str,
+                 passenger_id: str,
+                 seat: str,
+                 seat_type: str,
+                 product_info: Optional[List[ProductInfo]]=None):
+        self.syntax = {
+            'segment_id': segment_id,
+            'passenger_id': passenger_id,
+            'seat': seat,
+            'seat_type': seat_type,
+            'product_info': product_info,
+        }
+
+class PriceInfo(RequestConstructor):
+    """ Itemization of the total price.
+
+        Args:
+            title:
+                Price info title.
+            amount:
+                Price amount
+            currency:
+                Pricing currency.
+                Must be a three digit ISO-4217-3 code.
+    """
+
+    def __init__(self,
+                 title: str,
+                 amount: Decimal,
+                 currency: Optional[str]):
+        self.syntax = {
+            'title': title,
+            'amount': amount,
+            'currency': currency
+        }
+
+
 class AirlineItineraryUpdateTemplate(Template):
     """ The airline itinerary template allows you to send a structured message
         that contains a check-in reminder with flight information.
@@ -714,8 +807,6 @@ class AirlineItineraryUpdateTemplate(Template):
         Args:
             recipient:
                 Description of the message recipient.
-            template_type:
-                Value must be airline_itinerary.
             intro_message:
                 Introduction message.
             locale:
@@ -759,21 +850,143 @@ class AirlineItineraryUpdateTemplate(Template):
                  recipient: Recipient,
                  intro_message: str,
                  locale: str,
-                 ,
-                 theme_color: Optional[str] = None
-                 ):
+                 pnr_number: str,
+                 passenger_info: List[PassengerInfo],
+                 flight_info: List[FlightInfo],
+                 passenger_segment_info: List[PassengerSegmentInfo],
+                 total_price: Decimal,
+                 currency: str,
+                 theme_color: Optional[str]=None,
+                 price_info: Optional[List[PriceInfo]]=None,
+                 base_price: Optional[Decimal]=None,
+                 tax: Optional[Decimal]=None):
         self.payload = {
             'template_type': self.template_type,
             'intro_message': intro_message,
             'locale': locale,
             'theme_color': theme_color,
+            'pnr_number': pnr_number,
+            'passenger_info': passenger_info,
+            'flight_info': flight_info,
+            'passenger_segment_info': passenger_segment_info,
+            'price_info': price_info,
+            'base_price': base_price,
+            'tax': tax,
+            'total_price': total_price,
+            'currency': currency,
         }
         super().__init__(recipient=recipient, payload=self.payload)
 
 
-class AirlineFlightUpdateTemplate:
-    """"""
+class AirlineFlightUpdateTemplate(Template):
+    """ The airline flight update template allows you to send
+        a structured message that contains a updated flight information.
+
+        Args:
+            recipient:
+                Description of the message recipient.
+            intro_message:
+                Introduction message
+            theme_color:
+                Background color of the attachment.
+                Must be a RGB hexadecimal string.
+                Defaults to #009ddc.
+            update_type:
+                Type of update.
+                Must be 'delay', 'gate_change' or 'cancellation'.
+            locale:
+                Two-letter language region code.
+                Must be a two-letter ISO 639-1 language code and
+                a ISO 3166-1 alpha-2 region code separated by an underscore.
+                Used to translate field labels (e.g. en_US).
+            pnr_number:
+                The Passenger Name Record number (Booking Number).
+            update_flight_info:
+                Updated flight information.
+
+        Reference:
+        https://developers.facebook.com/docs/messenger-platform/reference/template/airline-flight-update
+
+        Implementation:
+        https://developers.facebook.com/docs/messenger-platform/send-messages/template/airline
+    """
+    template_type = 'airline_update'
+
+    def __init__(self,
+                 recipient: Recipient,
+                 intro_message: str,
+                 update_type: str,
+                 locale: str,
+                 update_flight_info: FlightInfo,
+                 pnr_number: Optional[str]=None,
+                 theme_color: Optional[str]=None,
+        ):
+        self.payload = {
+            'template_type': self.template_type,
+            'intro_message': intro_message,
+            'locale': locale,
+            'theme_color': theme_color,
+            'update_type': update_type,
+            'pnr_number': pnr_number,
+            'update_flight_info': update_flight_info
+        }
+        super().__init__(recipient=recipient, payload=self.payload)
 
 
-class MediaTemplate:
-    """"""
+class MediaElements(RequestConstructor):
+    """ Elements for MediaTemplate.
+
+        Args:
+            media_type:
+                The type of media being sent - image or video is supported.
+            attachment_id:
+                The attachment ID of the image or video.
+                Cannot be used if url is set.
+            url:
+                The URL of the image.
+                Cannot be used if attachment_id is set.
+            buttons:
+                An array of button objects to be appended to the template.
+                A maximum of 1 button is supported.
+    """
+    def __init__(self,
+                 media_type: str,
+                 attachment_id: Optional[str]=None,
+                 url: Optional[str]=None,
+                 buttons: Optional[List[Button]]=None):
+        self.syntax = {
+            'media_type': media_type,
+            'attachment_id': attachment_id,
+            'url': url,
+            'buttons': buttons
+        }
+
+
+class MediaTemplate(Template):
+    """ The media template allows you to send a structured message
+        that includes an image or video, and an optional button.
+
+        Args:
+            recipient:
+                Description of the message recipient.
+            elements:
+                An array containing 1 element object that describe the media
+                in the message. A maximum of 1 element is supported.
+
+        Reference:
+        https://developers.facebook.com/docs/messenger-platform/reference/template/media
+
+        Implementation:
+        https://developers.facebook.com/docs/messenger-platform/send-messages/template/airline
+
+    """
+    template_type = 'media'
+
+    def __init__(self,
+                 recipient: Recipient,
+                 elements: List[MediaElements]):
+        self.payload = {
+            'template_type': self.template_type,
+            'elements': elements
+        }
+        super().__init__(recipient=recipient, payload=self.payload)
