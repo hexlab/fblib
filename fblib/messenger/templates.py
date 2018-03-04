@@ -70,6 +70,7 @@ class GenericElement(RequestConstructor):
                 An array of buttons to append to the template.
                 A maximum of 3 buttons per element is supported.
     """
+
     def __init__(self,
                  title: str,
                  subtitle: Optional[str]=None,
@@ -244,6 +245,7 @@ class ReceiptElements(RequestConstructor):
             image_url:
                 The URL of an image to be displayed with the item.
     """
+
     def __init__(self,
                  title: str,
                  price: Decimal,
@@ -278,6 +280,7 @@ class Summary(RequestConstructor):
             total_tax:
                 The tax of the order.
     """
+
     def __init__(self,
                  total_cost: Decimal,
                  subtotal: Optional[Decimal],
@@ -309,6 +312,7 @@ class Address(RequestConstructor):
             street_2:
                 The street address, line 2.
     """
+
     def __init__(self,
                  street_1: str,
                  city: str,
@@ -335,6 +339,7 @@ class Adjustment(RequestConstructor):
             amount:
                 The amount of the adjustment.
     """
+
     def __init__(self, name: str, amount: Decimal):
         self.syntax = {
             'name': name,
@@ -421,6 +426,7 @@ class AuxiliaryField(RequestConstructor):
             value:
                 Value for the additional field.
     """
+
     def __init__(self, label: str, value: str):
         self.syntax = {
             'label': label,
@@ -445,6 +451,7 @@ class FlightSchedule(RequestConstructor):
                 Must be in the ISO 8601-based format YYYY-MM-DDThh:mm
                 (e.g. 2015-09-26T10:30).
     """
+
     def __init__(self,
                  departure_time: str,
                  boarding_time: Optional[str],
@@ -469,6 +476,7 @@ class DepartureAirport(RequestConstructor):
             gate:
                 Gate for the departing flight.
     """
+
     def __init__(self,
                  airport_code: str,
                  city: str,
@@ -491,6 +499,7 @@ class ArrivalAirport(RequestConstructor):
             city:
                 Departure city of the flight.
     """
+
     def __init__(self,
                  airport_code: str,
                  city: str):
@@ -513,6 +522,7 @@ class FlightInfo(RequestConstructor):
             flight_schedule:
                 Schedule for the flight.
     """
+
     def __init__(self,
                  flight_number: str,
                  departure_airport: DepartureAirport,
@@ -557,6 +567,7 @@ class BoardingPass(RequestConstructor):
             flight_info:
                 Information about the flight. See flight_info.
     """
+
     def __init__(self,
                  passenger_name: str,
                  pnr_number: str,
@@ -688,6 +699,7 @@ class PassengerInfo(RequestConstructor):
             name:
                 Full name of passenger, including title
     """
+
     def __init__(self,
                  passenger_id: str,
                  name: str,
@@ -709,6 +721,7 @@ class ProductInfo(RequestConstructor):
             value:
                 Product description.
     """
+
     def __init__(self, title: str, value: str):
         self.syntax = {
             'title': title,
@@ -733,6 +746,7 @@ class PassengerSegmentInfo(RequestConstructor):
                 List of products the passenger purchased.
                 Maximum of 4 items is supported.
     """
+
     def __init__(self,
                  segment_id: str,
                  passenger_id: str,
@@ -912,6 +926,7 @@ class MediaElements(RequestConstructor):
                 An array of button objects to be appended to the template.
                 A maximum of 1 button is supported.
     """
+
     def __init__(self,
                  media_type: str,
                  attachment_id: Optional[str]=None,

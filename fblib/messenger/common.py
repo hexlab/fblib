@@ -34,6 +34,7 @@ class Recipient:
                     {"first_name":"John", "last_name":"Doe"}
                 Providing a name increases the odds of a successful match.
     """
+
     def __init__(self, id_: str, phone_number: str, user_ref: str, name: dict):
         self.syntax = {
             'id': id_,
@@ -91,6 +92,7 @@ class Payload(RequestConstructor):
         Description:
         https://developers.facebook.com/docs/messenger-platform/send-messages
     """
+
     def __init__(self,
                  url: Optional[str]=None,
                  file: Optional[str]=None,  # TODO: add file uploading option
@@ -124,6 +126,7 @@ class Attachment(RequestConstructor):
         Reference:
         https://developers.facebook.com/docs/messenger-platform/reference/send-api/
     """
+
     def __init__(self,
                  type_: str,
                  payload: Union[Payload, Template]):
@@ -165,6 +168,7 @@ class QuickReply(RequestConstructor):
         Reference:
         https://developers.facebook.com/docs/messenger-platform/reference/send-api/quick-replies
     """
+
     def __init__(self,
                  content_type: str,
                  title: Optional[str]=None,
@@ -201,6 +205,7 @@ class Message(RequestConstructor):
         Reference:
         https://developers.facebook.com/docs/messenger-platform/reference/send-api/
     """
+
     def __init__(self,
                  text: Optional[str]=None,
                  attachment: Optional[Attachment]=None,
@@ -324,6 +329,7 @@ class Request(RequestConstructor):
         Reference:
         https://developers.facebook.com/docs/messenger-platform/reference/send-api/
     """
+
     def __init__(self,
                  messaging_type: MessagingType,
                  recipient: Recipient,
@@ -347,5 +353,5 @@ class Button(RequestConstructor):
 
         https://developers.facebook.com/docs/messenger-platform/send-messages/buttons
     """
-    type_: str = 'Button type'
-    templates: List[Template] = []
+    type_ = 'Button type'
+    templates = []

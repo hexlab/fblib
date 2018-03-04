@@ -135,6 +135,7 @@ class PriceList(RequestConstructor):
             amount:
                 Amount of line item.
     """
+
     def __init__(self, label: str, amount: str):
         self.syntax = {
             'label': label,
@@ -165,6 +166,7 @@ class PaymentSummary(RequestConstructor):
                 Whether this is a test payment.
                 Once set to true, the charge will be a dummy charge.
     """
+
     def __init__(self,
                  currency: str,
                  payment_type: PaymentType,
@@ -179,7 +181,7 @@ class PaymentSummary(RequestConstructor):
             'merchant_name': merchant_name,
             'requested_user_info': requested_user_info,
             'price_list': price_list
-            }
+        }
 
 
 class BuyButton(Button):
@@ -299,6 +301,7 @@ class GameMetadata(RequestConstructor):
             context_id:
                 Context ID (Instant Game name-space) of the THREAD to play in.
     """
+
     def __init__(self,
                  player_id: Optional[str],
                  context_id: Optional[str]):

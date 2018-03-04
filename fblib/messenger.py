@@ -10,7 +10,8 @@ class SendAPI:
     def __init__(self, access_token):
         self.access_token = access_token
 
-    def _call_api(self, http_method, api_method, json=None, files=None, **kwargs):
+    def _call_api(self, http_method, api_method, json=None, files=None,
+                  **kwargs):
         """ Basic method for calling Facebook Messenger Api
 
             Args:
@@ -25,7 +26,8 @@ class SendAPI:
         url = '/'.join((self.api_url, self.api_version, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params, files=files, json=json)
+        res = requests.request(http_method, url, params=params, files=files,
+                               json=json)
         if hasattr(res.json, '__contains__') and 'error' in res.json:
             raise FacebookError(res.json)
         return res
