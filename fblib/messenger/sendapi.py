@@ -38,15 +38,12 @@ class SendAPI:
         api_method = 'page_message_tags'
         return self._call_api('GET', api_method)
 
-    def send_message(self, recipient_id, message):
+    def send_message(self, message):
         """
 
             Reference:
             https://developers.facebook.com/docs/messenger-platform/send-messages
         """
         api_method = 'me/messages'
-        if hasattr(message, 'build'):
-            template = message.build(recipient_id)
-        else:
-            template = message
+        template = message.build() if hasattr(message, 'build') else message
         return self._call_api('POST', api_method, json=template)

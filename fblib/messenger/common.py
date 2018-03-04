@@ -10,11 +10,18 @@ class RequestConstructor:
     def build(self):
         """ Convert self.syntax to dict, removing None's.
         """
-        params = {k: v for k, v in self.syntax.items() if v is not None}
+        params = {}
+        for k, v in self.syntax.items():
+            if v is None:
+                continue
+            if hasattr(v, 'build'):
+                params[k] = v.build()
+            else:
+                params[k] = v
         return params
 
 
-class Recipient:
+class Recipient(RequestConstructor):
     """ Description of the message recipient.
         All requests must include one of id, phone_number, or user_ref.
 
@@ -35,7 +42,10 @@ class Recipient:
                 Providing a name increases the odds of a successful match.
     """
 
-    def __init__(self, id_: str, phone_number: str, user_ref: str, name: dict):
+    def __init__(self, id_: str,
+                 phone_number: Optional[str]=None,
+                 user_ref: Optional[str]=None,
+                 name: Optional[dict]=None):
         self.syntax = {
             'id': id_,
             'phone_number': phone_number,
