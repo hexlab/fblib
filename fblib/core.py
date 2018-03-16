@@ -95,7 +95,8 @@ class AppAPI:
         return res.json
 
     def create_test_user(self, installed=True, name='John Smith',
-        locale='en_US', permissions=None, method='post', **kwargs):
+                         locale='en_US', permissions=None, method='post',
+                         **kwargs):
         """ Create Facebook Test User
             Optional parameters:
                 installed -- boolean parameter to specify whether your app
