@@ -45,7 +45,7 @@ class AppAPI:
         res = requests.get(url, params=params)
         if hasattr(res.json, '__contains__') and 'error' in res.json:
             raise FacebookError(res.json)
-        self.access_token = res.text.split('=', 1)[1]
+        self.access_token = res.json('access_token')
         return self.access_token
 
     def _call_api(self, http_method, api_method, files=None, **kwargs):
