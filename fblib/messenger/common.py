@@ -14,10 +14,7 @@ class RequestConstructor:
         for k, v in self.syntax.items():
             if v is None:
                 continue
-            if hasattr(v, 'build'):
-                params[k] = v.build()
-            else:
-                params[k] = v
+            params[k] = v.build() if hasattr(v, 'build') else v
         return params
 
 
