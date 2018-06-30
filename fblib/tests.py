@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-import argparse
 import unittest
+import os
 
 from core import AppAPI, UserAPI, FacebookError
 
-app_id = None
-app_secret = None
-access_token = None
+app_id = os.environ.get('FB_APP_ID', None)
+app_secret = os.environ.get('FB_APP_SECRET', None)
+access_token = os.environ.get('FB_ACCESS_TOKEN', None)
 
 
 class TestFacebookError(unittest.TestCase):
@@ -37,7 +37,6 @@ class TestAppAPI(unittest.TestCase):
 
         # get list of test users assigned to the application
         res = self.api.get_list_of_test_users()
-        print('======>>>', res)
         self.assertIn('data', res)
         test_users = len(res['data'])
 
@@ -89,6 +88,7 @@ class TestUserAPI(unittest.TestCase):
             self.assertIn('data', res)
             self.assertEqual(len(res['data']), 10)
 
+    @unittest.skip('for future')
     def test_publish(self):
         # Publish post
         res = self.api.publish('me', 'feed', message='I like this new API!')
@@ -98,30 +98,5 @@ class TestUserAPI(unittest.TestCase):
         res = self.api.delete(post_id)
 
 
-parser = argparse.ArgumentParser(description='Test fblib')
-parser.add_argument('--app_id',
-                    help='Facebook App ID',
-                    required=True)
-parser.add_argument('--app_secret',
-                    help='Facebook App secret',
-                    required=True)
-parser.add_argument('--access_token',
-                    help='Facebook user access token. '
-                         'You could generate one here: '
-                         'https://developers.facebook.com/tools/access_token/',
-                    required=True)
-
-
 if __name__ == '__main__':
-    args = parser.parse_args()
-
-    app_id = args.app_id
-    app_secret = args.app_secret
-    access_token = args.access_token
-
-    suite = unittest.TestSuite()
-    test_methods = (TestFacebookError('test_error_messages'),
-                    TestAppAPI('test_default_workflow'),
-                    TestUserAPI('test_default_workflow'))
-    suite.addTests(test_methods)
-    unittest.TextTestRunner().run(suite)
+    unittest.main()
