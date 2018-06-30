@@ -29,5 +29,6 @@ nosetests.xml
 # Translations
 *.mo
 
+# PyCharm
 .idea
 .venv
