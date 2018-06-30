@@ -1,1 +1,1 @@
-git+git://github.com/kennethreitz/requests.git
+requests==2.19.1

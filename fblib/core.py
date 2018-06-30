@@ -43,9 +43,10 @@ class AppAPI:
                       client_secret=self.app_secret,
                       grant_type='client_credentials')
         res = requests.get(url, params=params)
-        if hasattr(res.json, '__contains__') and 'error' in res.json:
-            raise FacebookError(res.json)
-        self.access_token = res.text.split('=', 1)[1]
+        json_data = res.json()
+        if hasattr(json_data, '__contains__') and 'error' in json_data:
+            raise FacebookError(json_data)
+        self.access_token = json_data.get('access_token')
         return self.access_token
 
     def _call_api(self, http_method, api_method, files=None, **kwargs):
@@ -63,8 +64,9 @@ class AppAPI:
         params = dict(access_token=self.access_token)
         params.update(kwargs)
         res = requests.request(http_method, url, params=params, files=files)
-        if hasattr(res.json, '__contains__') and 'error' in res.json:
-            raise FacebookError(res.json)
+        json_data = res.json()
+        if 'error' in json_data:
+            raise FacebookError(json_data)
         return res
 
     def get_app_access_token(self):
@@ -83,7 +85,7 @@ class AppAPI:
         if metric:
             api_method = '/'.join((api_method, metric))
         res = self._call_api('GET', api_method, **kwargs)
-        return res.json
+        return res.json()
 
     def get_list_of_test_users(self, **kwargs):
         """ Returns list of Facebook Test Users for this application
@@ -92,7 +94,7 @@ class AppAPI:
         """
         api_method = 'accounts/test-users'
         res = self._call_api('GET', api_method, **kwargs)
-        return res.json
+        return res.json()
 
     def create_test_user(self, installed=True, name='John Smith',
         locale='en_US', permissions=None, method='post', **kwargs):
@@ -122,7 +124,7 @@ class AppAPI:
             params['permissions'] = permissions
         kwargs.update(params)
         res = self._call_api('GET', api_method, **kwargs)
-        return res.json
+        return res.json()
 
 
 class UserAPI:
@@ -149,26 +151,10 @@ class UserAPI:
         params = dict(access_token=self.access_token)
         params.update(kwargs)
         res = requests.request(http_method, url, params=params, files=files)
-        if hasattr(res.json, '__contains__') and 'error' in res.json:
-            raise FacebookError(res.json)
+        json_data = res.json()
+        if 'error' in json_data:
+            raise FacebookError(json_data)
         return res
-
-    def fql(self, query, **kwargs):
-        """ Running FQL queries using the Graph API.
-
-            Required parameters:
-                query -- can be a single fql query or a dictionary of queries
-            Optional parameters:
-                kwargs -- dictionary with additional parameters for the request
-            Examples:
-                fql('SELECT uid FROM event_member WHERE eid=12345678'),
-                fql({"query1": 'SELECT ...', "query12": 'SELECT ...'})
-            Documentation:
-                https://developers.facebook.com/docs/reference/fql/
-        """
-        api_method = 'fql?q={}'.format(query)
-        res = self._call_api('GET', api_method, **kwargs)
-        return res.json
 
     def get_objects(self, object_id, **kwargs):
         """ Returns object from Facebook Graph API
@@ -181,7 +167,7 @@ class UserAPI:
         """
         api_method = '{}'.format(object_id)
         res = self._call_api('GET', api_method, **kwargs)
-        return res.json
+        return res.json()
 
     def get_connections(self, object_id, connection, **kwargs):
         """ Returns connections between objects
@@ -196,36 +182,7 @@ class UserAPI:
         """
         api_method = '{}/{}'.format(object_id, connection)
         res = self._call_api('GET', api_method, **kwargs)
-        return res.json
-
-    def get_pictures(self, object_id, **kwargs):
-        """ Returns current profile photo for any object
-            Required parameters:
-                object_id -- ID of object in the social graph, e.g., 'me',
-                            '0xKirill', '0xKirill/picture', '817129783203'
-            Optional parameters:
-                kwargs -- dictionary with additional parameters for the request
-        """
-        api_method = '{}/picture'.format(object_id)
-        res = self._call_api('GET', api_method, **kwargs)
-        if kwargs.get('content_type') == 'image':
-            return res.text
-        return res.url
-
-    def search(self, query, **kwargs):
-        """ Search over all public objects in the social graph
-            Required parameters:
-                query -- search query
-                object_id -- ID of object in the social graph, e.g., 'me',
-                            '0xKirill', '0xKirill/picture', '817129783203'
-            Optional parameters:
-                kwargs -- dictionary with additional parameters for the request
-        """
-        api_method = 'search'
-        if query:
-            kwargs['q'] = query
-        res = self._call_api('GET', api_method, **kwargs)
-        return res.json
+        return res.json()
 
     def publish(self, object_id, connection, **kwargs):
         """ Publish to the Facebook graph
@@ -239,7 +196,7 @@ class UserAPI:
         """
         api_method = '{}/{}'.format(object_id, connection)
         res = self._call_api('POST', api_method, **kwargs)
-        return res.json
+        return res.json()
 
     def delete(self, object_id):
         """ Delete objects in the graph
@@ -249,4 +206,4 @@ class UserAPI:
         """
         api_method = '{}'.format(object_id)
         res = self._call_api('DELETE', api_method)
-        return res.json
+        return res.json()

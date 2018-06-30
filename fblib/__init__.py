@@ -24,12 +24,12 @@ Running tests:
     python tests.py --access_token=AAACEdEose0cBANLuYDa229TKr74oI6UYZC3BTZA...
         --app_id=390492104572701 --app_secret=5afa25cc01ea0440c340e20e2c6a8df
 
-:copyright: (c) 2012 by Kirill Karmadonov.
+:copyright: (c) 2018 by Kirill Karmadonov.
 :license: ISC, see LICENSE for more details.
 """
 
 __title__ = 'fblib'
-__version__ = (0, 9, 5)
+__version__ = (0, 9, 6)
 __author__ = 'Kirill Karmadonov'
 __license__ = 'ISC'
 __copyright__ = 'Copyright 2012 Kirill Karmadonov'
