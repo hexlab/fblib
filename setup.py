@@ -13,7 +13,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-requirements = ['requests==0.14.1']
+requirements = ['requests']
 
 setup(name='fblib',
       version=".".join(map(str, __version__)),

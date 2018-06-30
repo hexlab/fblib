@@ -19,7 +19,21 @@ class FacebookError(Exception):
         return repr(self.message)
 
 
-class AppAPI:
+class GraphAPI:
+    """ Facebook Graph API """
+    api_url = 'https://graph.facebook.com'
+    api_verion = 'v3.0'
+
+    def _call(self, http_method, path, **params):
+        url = '{}/{}'.format(self.api_url, path)
+        res = requests.request(http_method, url, params=params)
+        json_data = res.json()
+        if 'error' in json_data:
+            raise FacebookError(json_data)
+        return res
+
+
+class AppAPI(GraphAPI):
     """ Apps methods for Facebook Graph API
     The object is initialized with the `app access key` and `app secret key`
     Example:
@@ -27,8 +41,6 @@ class AppAPI:
         app_access_token = app_api.get_app_access_token()
         analytics = app_api.analytics()
     """
-
-    api_url = 'https://graph.facebook.com'
 
     def __init__(self, app_id, app_secret):
         self.app_id = app_id
@@ -49,7 +61,7 @@ class AppAPI:
         self.access_token = json_data.get('access_token')
         return self.access_token
 
-    def _call_api(self, http_method, api_method, files=None, **kwargs):
+    def call(self, http_method, api_method, **kwargs):
         """ Basic method for calling Facebook Graph Api
             Required parameters:
                 http_method -- HTTP request methods, e.g. 'POST', 'GET', etc.
@@ -60,14 +72,10 @@ class AppAPI:
         """
         if not self.access_token:
             self._get_access_token()
-        url = '/'.join((self.api_url, self.app_id, api_method))
+        path = '/'.join((self.app_id, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params, files=files)
-        json_data = res.json()
-        if 'error' in json_data:
-            raise FacebookError(json_data)
-        return res
+        return self._call(http_method, path, **params)
 
     def get_app_access_token(self):
         """ Returns the current access token being used by the SDK.
@@ -84,7 +92,7 @@ class AppAPI:
         api_method = 'insights'
         if metric:
             api_method = '/'.join((api_method, metric))
-        res = self._call_api('GET', api_method, **kwargs)
+        res = self.call('GET', api_method, **kwargs)
         return res.json()
 
     def get_list_of_test_users(self, **kwargs):
@@ -93,7 +101,7 @@ class AppAPI:
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = 'accounts/test-users'
-        res = self._call_api('GET', api_method, **kwargs)
+        res = self.call('GET', api_method, **kwargs)
         return res.json()
 
     def create_test_user(self, installed=True, name='John Smith',
@@ -124,22 +132,20 @@ class AppAPI:
         if permissions:
             params['permissions'] = permissions
         kwargs.update(params)
-        res = self._call_api('GET', api_method, **kwargs)
+        res = self.call('GET', api_method, **kwargs)
         return res.json()
 
 
-class UserAPI:
+class UserAPI(GraphAPI):
     """ Users methods for Facebook Graph API
     """
-
-    api_url = 'https://graph.facebook.com'
 
     def __init__(self, access_token):
         """
         """
         self.access_token = access_token
 
-    def _call_api(self, http_method, api_method, files=None, **kwargs):
+    def call(self, http_method, api_method, **kwargs):
         """ Basic method for calling Facebook Graph Api
             Required parameters:
                 http_method -- HTTP request methods, e.g. 'POST', 'GET', etc.
@@ -148,14 +154,9 @@ class UserAPI:
                 kwargs -- dictionary that specifying additional data to send
                           to the server
         """
-        url = '/'.join((self.api_url, api_method))
         params = dict(access_token=self.access_token)
         params.update(kwargs)
-        res = requests.request(http_method, url, params=params, files=files)
-        json_data = res.json()
-        if 'error' in json_data:
-            raise FacebookError(json_data)
-        return res
+        return self._call(http_method, api_method, **params)
 
     def get_objects(self, object_id, **kwargs):
         """ Returns object from Facebook Graph API
@@ -167,7 +168,7 @@ class UserAPI:
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}'.format(object_id)
-        res = self._call_api('GET', api_method, **kwargs)
+        res = self.call('GET', api_method, **kwargs)
         return res.json()
 
     def get_connections(self, object_id, connection, **kwargs):
@@ -182,7 +183,7 @@ class UserAPI:
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}/{}'.format(object_id, connection)
-        res = self._call_api('GET', api_method, **kwargs)
+        res = self.call('GET', api_method, **kwargs)
         return res.json()
 
     def publish(self, object_id, connection, **kwargs):
@@ -196,7 +197,7 @@ class UserAPI:
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}/{}'.format(object_id, connection)
-        res = self._call_api('POST', api_method, **kwargs)
+        res = self.call('POST', api_method, **kwargs)
         return res.json()
 
     def delete(self, object_id):
@@ -206,5 +207,5 @@ class UserAPI:
                             '0xKirill', '0xKirill/picture', '817129783203'
         """
         api_method = '{}'.format(object_id)
-        res = self._call_api('DELETE', api_method)
+        res = self.call('DELETE', api_method)
         return res.json()
