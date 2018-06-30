@@ -25,12 +25,20 @@ class GraphAPI:
     api_verion = 'v3.0'
 
     def _call(self, http_method, path, **params):
+        """ Basic method for calling Facebook Graph Api
+            Required parameters:
+                http_method -- HTTP request methods, e.g. 'POST', 'GET', etc.
+                path -- part of URL after `self.api_url`
+            Optional parameters:
+                kwargs -- dictionary that specifying additional data to send
+                          to the server
+        """
         url = '{}/{}'.format(self.api_url, path)
         res = requests.request(http_method, url, params=params)
         json_data = res.json()
         if 'error' in json_data:
             raise FacebookError(json_data)
-        return res
+        return json_data
 
 
 class AppAPI(GraphAPI):
@@ -50,14 +58,10 @@ class AppAPI(GraphAPI):
     def _get_access_token(self):
         """ Returns the current application access token being used by the SDK
         """
-        url = '/'.join((self.api_url, "oauth/access_token"))
         params = dict(client_id=self.app_id,
                       client_secret=self.app_secret,
                       grant_type='client_credentials')
-        res = requests.get(url, params=params)
-        json_data = res.json()
-        if hasattr(json_data, '__contains__') and 'error' in json_data:
-            raise FacebookError(json_data)
+        json_data = self._call('GET', 'oauth/access_token', **params)
         self.access_token = json_data.get('access_token')
         return self.access_token
 
@@ -92,8 +96,7 @@ class AppAPI(GraphAPI):
         api_method = 'insights'
         if metric:
             api_method = '/'.join((api_method, metric))
-        res = self.call('GET', api_method, **kwargs)
-        return res.json()
+        return self.call('GET', api_method, **kwargs)
 
     def get_list_of_test_users(self, **kwargs):
         """ Returns list of Facebook Test Users for this application
@@ -101,8 +104,7 @@ class AppAPI(GraphAPI):
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = 'accounts/test-users'
-        res = self.call('GET', api_method, **kwargs)
-        return res.json()
+        return self.call('GET', api_method, **kwargs)
 
     def create_test_user(self, installed=True, name='John Smith',
                          locale='en_US', permissions=None, method='post',
@@ -132,8 +134,7 @@ class AppAPI(GraphAPI):
         if permissions:
             params['permissions'] = permissions
         kwargs.update(params)
-        res = self.call('GET', api_method, **kwargs)
-        return res.json()
+        return self.call('GET', api_method, **kwargs)
 
 
 class UserAPI(GraphAPI):
@@ -168,8 +169,7 @@ class UserAPI(GraphAPI):
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}'.format(object_id)
-        res = self.call('GET', api_method, **kwargs)
-        return res.json()
+        return self.call('GET', api_method, **kwargs)
 
     def get_connections(self, object_id, connection, **kwargs):
         """ Returns connections between objects
@@ -183,8 +183,7 @@ class UserAPI(GraphAPI):
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}/{}'.format(object_id, connection)
-        res = self.call('GET', api_method, **kwargs)
-        return res.json()
+        return self.call('GET', api_method, **kwargs)
 
     def publish(self, object_id, connection, **kwargs):
         """ Publish to the Facebook graph
@@ -197,8 +196,7 @@ class UserAPI(GraphAPI):
                 kwargs -- dictionary with additional parameters for the request
         """
         api_method = '{}/{}'.format(object_id, connection)
-        res = self.call('POST', api_method, **kwargs)
-        return res.json()
+        return self.call('POST', api_method, **kwargs)
 
     def delete(self, object_id):
         """ Delete objects in the graph
@@ -207,5 +205,4 @@ class UserAPI(GraphAPI):
                             '0xKirill', '0xKirill/picture', '817129783203'
         """
         api_method = '{}'.format(object_id)
-        res = self.call('DELETE', api_method)
-        return res.json()
+        return self.call('DELETE', api_method)
